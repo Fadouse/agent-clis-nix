@@ -2,3 +2,6 @@ result
 result-*
 .dsh-lock-*
 .npm-cache
+
+__pycache__/
+*.pyc

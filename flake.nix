@@ -35,6 +35,7 @@
           claude-code = pkgs.callPackage ./packages/claude-code.nix { };
           codex = pkgs.callPackage ./packages/codex.nix { };
           pi-coding-agent = pkgs.callPackage ./packages/pi-coding-agent.nix { };
+          oh-my-pi = pkgs.callPackage ./packages/oh-my-pi.nix { };
           riemann-agent = inputs.riemann-agent.packages.${system}.riemann-agent;
           default = riemann-agent;
         }

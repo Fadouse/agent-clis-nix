@@ -1,0 +1,70 @@
+name: update-agent-releases
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-agent-releases
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Install official Nix 2.34.7
+        shell: bash
+        run: |
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error \
+            https://releases.nixos.org/nix/nix-2.34.7/install -o /tmp/install-nix
+          echo 'e9d447ce3d2ff62d7ff9cb6ef401de6fa8acb148839dd00f7271945d7b638b14  /tmp/install-nix' | sha256sum -c -
+          sh /tmp/install-nix --no-daemon --yes
+      - name: Update every agent from official upstream metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+          python3 scripts/update-agent-releases.py
+          nix --extra-experimental-features 'nix-command flakes' flake update riemann-agent
+          if grep -q 'sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' packages/pi-coding-agent.nix; then
+            set +e
+            output=$(nix --extra-experimental-features 'nix-command flakes' build --no-link .#pi-coding-agent 2>&1)
+            rc=$?
+            set -e
+            test "$rc" -ne 0
+            got=$(printf '%s\n' "$output" | sed -n 's/.*got:[[:space:]]*\(sha256-[A-Za-z0-9+\/=]*\).*/\1/p' | tail -n1)
+            test -n "$got"
+            sed -i "s#sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=#$got#" packages/pi-coding-agent.nix
+          fi
+          if git diff --quiet; then
+            echo "All agents already current"
+            exit 0
+          fi
+          nix --extra-experimental-features 'nix-command flakes' fmt
+          nix --extra-experimental-features 'nix-command flakes' flake check --print-build-logs
+      - name: Publish verified update to main
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          versions=$(printf 'claude=%s codex=%s pi=%s omp=%s' \
+            "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/claude-code.nix)" \
+            "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/codex.nix)" \
+            "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/pi-coding-agent.nix)" \
+            "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/oh-my-pi.nix)")
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add flake.lock packages
+          git commit -m "chore: update agent releases (${versions})"
+          git pull --rebase origin main
+          git push origin HEAD:main
