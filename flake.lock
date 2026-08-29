@@ -1,0 +1,48 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1787848966,
+        "narHash": "sha256-7gDpu5hpq0rOYnYMcOWqSzquK4HA/xU8Xf3CjUBOOJA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d57af924f160a5084293c71c2043f058bd1cdb60",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-26.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "riemann-agent": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788028315,
+        "narHash": "sha256-01cqvCyiBKdXK+Lp26J6TVO+J+vX7bateuZtO5H5oOI=",
+        "owner": "Fadouse",
+        "repo": "riemann-agent",
+        "rev": "4971ef230a00bb81d13e450a7a3f94bba62f04eb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Fadouse",
+        "repo": "riemann-agent",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "riemann-agent": "riemann-agent"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
