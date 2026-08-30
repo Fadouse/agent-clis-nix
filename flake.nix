@@ -22,7 +22,12 @@
         system:
         import nixpkgs {
           inherit system;
-          config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "claude-code";
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "chatgpt"
+              "claude-code"
+            ];
         };
     in
     {
@@ -32,6 +37,7 @@
           pkgs = pkgsFor system;
         in
         rec {
+          chatgpt = pkgs.callPackage ./packages/chatgpt.nix { };
           claude-code = pkgs.callPackage ./packages/claude-code.nix { };
           codex = pkgs.callPackage ./packages/codex.nix { };
           pi-coding-agent = pkgs.callPackage ./packages/pi-coding-agent.nix { };

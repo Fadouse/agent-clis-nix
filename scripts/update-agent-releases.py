@@ -49,6 +49,35 @@ def replace_version_hash(path: pathlib.Path, version: str, source_hash: str):
     return True
 
 
+# ChatGPT desktop: official OpenAI APT package metadata and versioned package URL.
+chatgpt_packages = fetch("https://persistent.oaistatic.com/codex-app-prod/linux/deb/dists/stable/main/binary-amd64/Packages").decode()
+chatgpt_record = None
+for block in chatgpt_packages.split("\n\n"):
+    fields = {}
+    for line in block.splitlines():
+        if ": " in line:
+            key, value = line.split(": ", 1)
+            fields[key] = value
+    if fields.get("Package") == "chatgpt" and fields.get("Architecture") == "amd64":
+        chatgpt_record = fields
+        break
+if not chatgpt_record:
+    raise SystemExit("official ChatGPT amd64 package not found")
+chatgpt_path = ROOT / "packages/chatgpt.nix"
+chatgpt_text = chatgpt_path.read_text()
+chatgpt_current = re.search(r'  version = "([0-9.]+)";', chatgpt_text).group(1)
+chatgpt_version = chatgpt_record["Version"]
+expected_filename = f"pool/main/c/chatgpt/chatgpt_{chatgpt_version}_amd64.deb"
+if chatgpt_record["Filename"] != expected_filename:
+    raise SystemExit("unexpected official ChatGPT package filename")
+if chatgpt_current != chatgpt_version:
+    chatgpt_text = chatgpt_text.replace(f'  version = "{chatgpt_current}";', f'  version = "{chatgpt_version}";', 1)
+    chatgpt_text, count = re.subn(r'    hash = "sha256-[A-Za-z0-9+/=]+";', f'    hash = "{sri_hex(chatgpt_record["SHA256"])}";', chatgpt_text, count=1)
+    if count != 1:
+        raise SystemExit("cannot update ChatGPT source hash")
+    chatgpt_path.write_text(chatgpt_text)
+    print(f"updated chatgpt.nix: {chatgpt_current} -> {chatgpt_version}")
+
 # Claude Code: official npm version points to the matching official native manifest.
 claude_meta = fetch_json("https://registry.npmjs.org/@anthropic-ai/claude-code/latest")
 claude_version = claude_meta["version"]

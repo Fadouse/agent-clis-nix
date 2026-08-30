@@ -57,7 +57,8 @@ jobs:
           if git diff --quiet; then
             exit 0
           fi
-          versions=$(printf 'claude=%s codex=%s pi=%s omp=%s' \
+          versions=$(printf 'chatgpt=%s claude=%s codex=%s pi=%s omp=%s' \
+            "$(sed -n 's/^  version = \"\([0-9.]*\)\";/\1/p' packages/chatgpt.nix)" \
             "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/claude-code.nix)" \
             "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/codex.nix)" \
             "$(sed -n 's/^  version = "\([0-9.]*\)";/\1/p' packages/pi-coding-agent.nix)" \
