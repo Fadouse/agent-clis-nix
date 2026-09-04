@@ -48,6 +48,6 @@
       );
 
       checks = forAllSystems (system: self.packages.${system});
-      formatter = forAllSystems (system: (pkgsFor system).nixfmt);
+      formatter = forAllSystems (system: (pkgsFor system).nixfmt-tree);
     };
 }
