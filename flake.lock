@@ -23,11 +23,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788594981,
-        "narHash": "sha256-qINL4VZUSsJNrtnMTNAp6BmCjChyVhov/vP33e0n4VU=",
+        "lastModified": 1788630659,
+        "narHash": "sha256-bw1STk2VGmKC4Pl0Um9V1FkA+ZW9+d0AHpreG2FiTcA=",
         "owner": "Fadouse",
         "repo": "riemann-agent",
-        "rev": "e1c20de2a6f3b0b5792f17096fc11482c93f49cd",
+        "rev": "920de2873d594f29c782258d02a340f4515fe63d",
         "type": "github"
       },
       "original": {
