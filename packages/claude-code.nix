@@ -16,11 +16,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "claude-code";
-  version = "2.1.269";
+  version = "2.1.270";
 
   src = fetchurl {
     url = "https://downloads.claude.ai/claude-code-releases/${finalAttrs.version}/linux-x64/claude";
-    hash = "sha256-JeRIg/VEGVaaPXOfOMu9rr6DsJiV2g80PhsANxCkd1s=";
+    hash = "sha256-OmJKWnzXm7rU0yvX2zbxGX7PRYvFvx4q7YGDSgGtPvA=";
   };
 
   dontUnpack = true;
