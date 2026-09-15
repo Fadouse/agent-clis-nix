@@ -8,7 +8,7 @@
 }:
 
 let
-  version = "26.908.40834";
+  version = "26.908.70816";
 
   # Preserve OpenAI's upstream ELF layout and provide its Debian runtime in an
   # FHS environment, rather than patching the bundled Electron and Codex ELFs.
@@ -18,7 +18,7 @@ let
 
     src = fetchurl {
       url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/pool/main/c/chatgpt/chatgpt_${version}_amd64.deb";
-      hash = "sha256-2je457zvquoBnEeMrL5sc+4d3RXg4euzx+8KQt2BisI=";
+      hash = "sha256-EO0MGogLmXXR8YW/eRGn9RTga5hjzU7ZVh1ABjYXyFQ=";
     };
 
     nativeBuildInputs = [ dpkg ];

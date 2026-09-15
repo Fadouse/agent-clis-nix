@@ -13,11 +13,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "oh-my-pi";
-  version = "18.1.20";
+  version = "18.1.22";
 
   src = fetchurl {
     url = "https://github.com/can1357/oh-my-pi/releases/download/v${finalAttrs.version}/omp-linux-x64";
-    hash = "sha256-9OuOA3xBBOl9o7wgI+yuJKzU9SZHNqkfvuV3Fx/p7a8=";
+    hash = "sha256-nM3fEJHgHgj+ofjhII+JAcyQ1dCYsWWBZy7qsD8Ri4E=";
   };
   licenseFile = fetchurl {
     url = "https://github.com/can1357/oh-my-pi/releases/download/v${finalAttrs.version}/LICENSE";
