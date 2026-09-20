@@ -12,19 +12,19 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "pi-coding-agent";
-  version = "0.85.1";
+  version = "0.86.0";
 
   # Official npm release built by the upstream tag v0.84.1. The tag source
   # omits hydrated model data required by its offline build, while this release
   # carries the already-built JavaScript and its upstream npm-shrinkwrap.json.
   src = fetchurl {
     url = "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-${finalAttrs.version}.tgz";
-    hash = "sha256-H0mHKWSb3OZH0RYJk7TZK/PGFMyBkhO+4vkd008qevQ=";
+    hash = "sha256-Pw9QL0l8RIiN29aKEYl2Ubc56qvfSyNeOn7Zc1NTsM0=";
   };
   sourceRoot = "package";
 
   nodejs = nodejs_24;
-  npmDepsHash = "sha256-/9Y0z0AsOc+G6IOn2PqksLYziJJ83YtAHBnXGGyepuU=";
+  npmDepsHash = "sha256-SeX6waljwWaHV8ytMTq9Twh8wU2MfLQFlh2P6e7ReYg=";
   npmRebuildFlags = [ "--ignore-scripts" ];
   dontNpmBuild = true;
 
