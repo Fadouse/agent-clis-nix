@@ -3,27 +3,14 @@ import base64
 import hashlib
 import io
 import json
-import os
 import pathlib
 import re
 import tarfile
-import urllib.request
 
 from pi_npm import prepare_pi_npm
+from release_http import fetch, fetch_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-HEADERS = {"User-Agent": "Fadouse-agent-clis-updater"}
-if token := os.environ.get("GH_TOKEN"):
-    HEADERS["Authorization"] = f"Bearer {token}"
-
-
-def fetch(url: str) -> bytes:
-    with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS)) as response:
-        return response.read()
-
-
-def fetch_json(url: str):
-    return json.loads(fetch(url))
 
 
 def sri_bytes(data: bytes) -> str:
