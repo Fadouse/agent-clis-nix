@@ -14,9 +14,8 @@ buildNpmPackage (finalAttrs: {
   pname = "pi-coding-agent";
   version = "1.0.0";
 
-  # Official npm release built by the upstream tag v0.84.1. The tag source
-  # omits hydrated model data required by its offline build, while this release
-  # carries the already-built JavaScript and its upstream npm-shrinkwrap.json.
+  # Official npm releases carry the built JavaScript, including hydrated model
+  # data that is unavailable when building the tag source offline.
   src = fetchurl {
     url = "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-${finalAttrs.version}.tgz";
     hash = "sha256-Y47Tq75U73DL+Gc65LxTHnkWE3VqrARkTPzcxK8Pr68=";
@@ -30,7 +29,8 @@ buildNpmPackage (finalAttrs: {
 
   nativeBuildInputs = [ makeBinaryWrapper ];
 
-  # Upstream 0.84.1 omitted SRI fields for its six first-party tarballs.
+  # The updater preserves upstream locks (filling missing first-party SRI) or
+  # generates one from the official registry when the tarball omits its lock.
   postPatch = ''
     cp ${./pi-coding-agent.package.json} package.json
     cp ${./pi-coding-agent.npm-shrinkwrap.json} npm-shrinkwrap.json

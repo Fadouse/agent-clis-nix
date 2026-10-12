@@ -29,11 +29,15 @@ jobs:
       - name: Update every agent from official upstream metadata
         env:
           GH_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: "1"
         shell: bash
         run: |
           set -euo pipefail
           . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-          python3 scripts/update-agent-releases.py
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+          nix --extra-experimental-features 'nix-command flakes' shell \
+            --inputs-from . nixpkgs#nodejs_24 \
+            --command python3 scripts/update-agent-releases.py
           nix --extra-experimental-features 'nix-command flakes' flake update riemann-agent
           if grep -q 'sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' packages/pi-coding-agent.nix; then
             set +e
