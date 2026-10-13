@@ -13,11 +13,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "oh-my-pi";
-  version = "18.10.1";
+  version = "18.10.3";
 
   src = fetchurl {
     url = "https://github.com/can1357/oh-my-pi/releases/download/v${finalAttrs.version}/omp-linux-x64";
-    hash = "sha256-l5jSLVGLIzQrTK31dnKydu8J51bBgyrcZXGwSyatTxs=";
+    hash = "sha256-Nm/82oDbV7glkhtv9LDl5iO8Ys8YR48oKM2KMi/HL/k=";
   };
   licenseFile = fetchurl {
     url = "https://github.com/can1357/oh-my-pi/releases/download/v${finalAttrs.version}/LICENSE";
@@ -25,7 +25,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
   thirdPartyNotices = fetchurl {
     url = "https://github.com/can1357/oh-my-pi/releases/download/v${finalAttrs.version}/THIRD-PARTY-NOTICES.txt";
-    hash = "sha256-0MLnwFu011UESxP6VgvljQGrfJgLh4kkAKl5OX5Wmos=";
+    hash = "sha256-doYS1ApNF4iBO5l7ARKQ0PCMQmrdRS3mVgvyJ80fwp0=";
   };
 
   dontUnpack = true;
