@@ -27,6 +27,7 @@
             builtins.elem (nixpkgs.lib.getName pkg) [
               "chatgpt"
               "claude-code"
+              "grok-bot"
             ];
         };
     in
@@ -40,6 +41,7 @@
           chatgpt = pkgs.callPackage ./packages/chatgpt.nix { };
           claude-code = pkgs.callPackage ./packages/claude-code.nix { };
           codex = pkgs.callPackage ./packages/codex.nix { };
+          grok-bot = pkgs.callPackage ./packages/grok-bot.nix { };
           pi-coding-agent = pkgs.callPackage ./packages/pi-coding-agent.nix { };
           oh-my-pi = pkgs.callPackage ./packages/oh-my-pi.nix { };
           riemann-agent = inputs.riemann-agent.packages.${system}.riemann-agent;

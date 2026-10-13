@@ -37,6 +37,36 @@ def replace_version_hash(path: pathlib.Path, version: str, source_hash: str):
     return True
 
 
+# Grok Bot desktop: official stable feed and a hashed versioned Debian package.
+grok_release = fetch_json("https://api2.cursor.sh/updates/api/download/stable/linux-x64/sand")
+grok_version = grok_release.get("version")
+grok_revision = grok_release.get("commitSha")
+if not isinstance(grok_version, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", grok_version):
+    raise SystemExit("unexpected Grok Bot stable version")
+if not isinstance(grok_revision, str) or not re.fullmatch(r"[0-9a-f]{40}", grok_revision):
+    raise SystemExit("unexpected Grok Bot build revision")
+grok_url = f"https://downloads.cursor.com/grokbot/stable/{grok_revision}/linux/x64/grok-bot_{grok_version}_amd64.deb"
+if grok_release.get("debUrl") != grok_url:
+    raise SystemExit("unexpected official Grok Bot amd64 package URL")
+grok_path = ROOT / "packages/grok-bot.nix"
+grok_text = grok_path.read_text()
+grok_current_version = re.search(r'^  version = "([0-9.]+)";$', grok_text, re.MULTILINE)
+grok_current_revision = re.search(r'^  revision = "([0-9a-f]{40})";$', grok_text, re.MULTILINE)
+if not grok_current_version or not grok_current_revision:
+    raise SystemExit("cannot locate Grok Bot version and revision")
+if (grok_current_version.group(1), grok_current_revision.group(1)) != (grok_version, grok_revision):
+    # The official feed has no digest: hash its Debian download for Nix to verify.
+    grok_archive = fetch(grok_url)
+    if not grok_archive.startswith(b"!<arch>\n"):
+        raise SystemExit("official Grok Bot download is not a Debian archive")
+    grok_text = grok_text.replace(grok_current_version.group(0), f'  version = "{grok_version}";', 1)
+    grok_text = grok_text.replace(grok_current_revision.group(0), f'  revision = "{grok_revision}";', 1)
+    grok_text, count = re.subn(r'      hash = "sha256-[A-Za-z0-9+/=]+";', f'      hash = "{sri_bytes(grok_archive)}";', grok_text, count=1)
+    if count != 1:
+        raise SystemExit("cannot update Grok Bot source hash")
+    grok_path.write_text(grok_text)
+    print(f"updated grok-bot.nix: {grok_current_version.group(1)} -> {grok_version} ({grok_revision})")
+
 # ChatGPT desktop: official OpenAI APT package metadata and versioned package URL.
 chatgpt_packages = fetch("https://persistent.oaistatic.com/codex-app-prod/linux/deb/dists/stable/main/binary-amd64/Packages").decode()
 chatgpt_record = None
