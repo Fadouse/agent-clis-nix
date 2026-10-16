@@ -12,18 +12,18 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "pi-coding-agent";
-  version = "1.2.0";
+  version = "1.3.0";
 
   # Official npm releases carry the built JavaScript, including hydrated model
   # data that is unavailable when building the tag source offline.
   src = fetchurl {
     url = "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-${finalAttrs.version}.tgz";
-    hash = "sha256-Hf7TCPRqaa7Aa/ncIHAN3G/iNwsYmPATNLeJg5dUHmY=";
+    hash = "sha256-rieF6HC4GoyOHURRCle17gv8npdGeawvqq2kqr7j08A=";
   };
   sourceRoot = "package";
 
   nodejs = nodejs_24;
-  npmDepsHash = "sha256-msKZxYVXBKCXHubJBlOlqZgnEIRmdFFJ3W7S8XaoaCE=";
+  npmDepsHash = "sha256-634eXChqP2MMjohD6l94ZWOidyiow2Vj1HQvKznbR74=";
   npmRebuildFlags = [ "--ignore-scripts" ];
   dontNpmBuild = true;
 
