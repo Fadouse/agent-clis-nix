@@ -49,7 +49,13 @@
         }
       );
 
-      checks = forAllSystems (system: self.packages.${system});
+      checks = forAllSystems (
+        system:
+        self.packages.${system}
+        // {
+          grok-bot-desktop = (pkgsFor system).callPackage ./tests/grok-bot-desktop.nix { };
+        }
+      );
       formatter = forAllSystems (system: (pkgsFor system).nixfmt-tree);
     };
 }

@@ -102,9 +102,7 @@ buildFHSEnv {
   extraInstallCommands = ''
     mkdir -p "$out/share"
     cp -a ${payload}/share/. "$out/share/"
-    substituteInPlace "$out/share/applications/grok-bot.desktop" \
-      --replace-fail 'Exec=grok-bot %U' "Exec=$out/bin/grok-bot %U"
-    desktop-file-validate "$out/share/applications/grok-bot.desktop"
+    bash ${../scripts/fix-grok-desktop.sh} "$out"
   '';
 
   meta = {
