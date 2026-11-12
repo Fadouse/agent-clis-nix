@@ -42,7 +42,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook preInstall
     install -Dm755 "$src" "$out/libexec/omp"
     install -Dm444 "$licenseFile" "$out/share/licenses/oh-my-pi/LICENSE"
-    install -Dm444 "$thirdPartyNotices" "$out/share/licenses/oh-my-pi/THIRD-PARTY-NOTICES.txt"
+    ${lib.optionalString (finalAttrs.thirdPartyNotices != null) ''
+      install -Dm444 "$thirdPartyNotices" "$out/share/licenses/oh-my-pi/THIRD-PARTY-NOTICES.txt"
+    ''}
     makeWrapper "$out/libexec/omp" "$out/bin/omp" \
       --suffix PATH : ${
         lib.makeBinPath [

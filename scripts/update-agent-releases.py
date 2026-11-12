@@ -8,6 +8,7 @@ import re
 import tarfile
 
 from pi_npm import prepare_pi_npm
+from omp_release import update_omp_nix
 from release_http import fetch, fetch_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -126,24 +127,16 @@ replace_version_hash(ROOT / "packages/codex.nix", codex_match.group(1), sri_hex(
 
 # Oh My Pi: official stable GitHub release assets and their official digests.
 omp_release = fetch_json("https://api.github.com/repos/can1357/oh-my-pi/releases/latest")
-if omp_release["draft"] or omp_release["prerelease"]:
-    raise SystemExit("Oh My Pi latest release is not stable")
-omp_match = re.fullmatch(r"v([0-9]+\.[0-9]+\.[0-9]+)", omp_release["tag_name"])
-if not omp_match:
-    raise SystemExit("unexpected Oh My Pi release tag")
-omp_assets = {asset["name"]: asset for asset in omp_release["assets"]}
 omp_path = ROOT / "packages/oh-my-pi.nix"
 omp_text = omp_path.read_text()
 omp_current = re.search(r'  version = "([0-9.]+)";', omp_text).group(1)
-if omp_current != omp_match.group(1):
-    omp_text = omp_text.replace(f'  version = "{omp_current}";', f'  version = "{omp_match.group(1)}";', 1)
-    for attribute, name in [("src", "omp-linux-x64"), ("licenseFile", "LICENSE"), ("thirdPartyNotices", "THIRD-PARTY-NOTICES.txt")]:
-        pattern = rf'({attribute} = fetchurl \{{.*?hash = ")[^"]+(";)'
-        omp_text, count = re.subn(pattern, rf'\g<1>{sri_hex(omp_assets[name]["digest"])}\g<2>', omp_text, count=1, flags=re.DOTALL)
-        if count != 1:
-            raise SystemExit(f"cannot update Oh My Pi {attribute}")
-    omp_path.write_text(omp_text)
-    print(f"updated oh-my-pi.nix: {omp_current} -> {omp_match.group(1)}")
+try:
+    omp_updated = update_omp_nix(omp_text, omp_release)
+except ValueError as error:
+    raise SystemExit(str(error)) from error
+if omp_updated != omp_text:
+    omp_path.write_text(omp_updated)
+    print(f"updated oh-my-pi.nix: {omp_current} -> {omp_release['tag_name'][1:]}")
 
 # Pi: official npm release, with an upstream or automatically generated dependency lock.
 pi_meta = fetch_json("https://registry.npmjs.org/@earendil-works/pi-coding-agent/latest")
