@@ -9,8 +9,8 @@
 }:
 
 let
-  version = "1.0.3";
-  revision = "be8eaf76ba888db05a6a8950922f5fc8bb4d14e9";
+  version = "1.1.0";
+  revision = "83d46d618ef4c12afa17edd8e3c29d6caf046d17";
 
   # Keep the official Electron runtime and native modules together, unpatched.
   payload = stdenvNoCC.mkDerivation {
@@ -19,7 +19,7 @@ let
 
     src = fetchurl {
       url = "https://downloads.cursor.com/grokbot/stable/${revision}/linux/x64/grok-bot_${version}_amd64.deb";
-      hash = "sha256-75DYFx/iB/ObiHdTwf9JLGaEoan5ENbh36AwOIn8+PA=";
+      hash = "sha256-WwL7IVED7e2U7J84GnkNcfZyfwF2gcft0bVvK4z6Vy0=";
     };
 
     nativeBuildInputs = [ dpkg ];
